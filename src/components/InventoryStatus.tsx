@@ -165,7 +165,7 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                 <table className="w-full text-sm text-left">
                     <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
                         <tr>
-                            <th className="px-6 py-3 w-4">
+                            <th className="px-6 py-3 w-4 whitespace-nowrap">
                                 <div className="flex items-center">
                                     <input
                                         type="checkbox"
@@ -175,13 +175,13 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                     />
                                 </div>
                             </th>
-                            <th className="px-6 py-3 font-medium">제품명</th>
-                            <th className="px-2 py-3 font-medium text-center w-10">💪</th>
-                            <th className="px-6 py-3 font-medium">카테고리</th>
-                            <th className="px-6 py-3 font-medium">창고</th>
-                            <th className="px-6 py-3 font-medium">구역(Rack)</th>
-                            <th className="px-6 py-3 font-medium text-right">수량</th>
-                            <th className="px-6 py-3 font-medium text-right">팔레트</th>
+                            <th className="px-6 py-3 font-medium whitespace-nowrap">제품명</th>
+                            <th className="px-2 py-3 font-medium text-center w-10 whitespace-nowrap">💪</th>
+                            <th className="px-6 py-3 font-medium whitespace-nowrap">카테고리</th>
+                            <th className="px-6 py-3 font-medium whitespace-nowrap">창고</th>
+                            <th className="px-6 py-3 font-medium whitespace-nowrap">구역(Rack)</th>
+                            <th className="px-6 py-3 font-medium text-right whitespace-nowrap">수량</th>
+                            <th className="px-6 py-3 font-medium text-right whitespace-nowrap">팔레트</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
@@ -198,7 +198,7 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                     className={`hover:bg-slate-50 transition-colors ${selectedIds.has(item.id) ? 'bg-blue-50/50' : ''}`}
                                     onClick={() => toggleSelect(item.id)}
                                 >
-                                    <td className="px-6 py-4 w-4">
+                                    <td className="px-6 py-4 w-4 whitespace-nowrap">
                                         <div className="flex items-center">
                                             <input
                                                 type="checkbox"
@@ -211,8 +211,8 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
-                                    <td className="px-2 py-4 text-center">
+                                    <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{item.name}</td>
+                                    <td className="px-2 py-4 text-center whitespace-nowrap">
                                         <button
                                             onClick={(e) => handleToggleGgadegi(e, item)}
                                             className={`p-1 rounded-full hover:bg-slate-100 transition-colors ${item.isGgadegi ? 'opacity-100 grayscale-0' : 'opacity-20 grayscale'
@@ -222,17 +222,17 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                             <span className="text-xl">💪</span>
                                         </button>
                                     </td>
-                                    <td className="px-6 py-4 text-slate-600">
+                                    <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
                                             {item.category}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-slate-600">{item.warehouse}</td>
-                                    <td className="px-6 py-4 text-slate-600 font-mono">{item.rack}</td>
-                                    <td className="px-6 py-4 text-right font-medium text-blue-600">
+                                    <td className="px-6 py-4 text-slate-600 whitespace-nowrap">{item.warehouse}</td>
+                                    <td className="px-6 py-4 text-slate-600 font-mono whitespace-nowrap">{item.rack}</td>
+                                    <td className="px-6 py-4 text-right font-medium text-blue-600 whitespace-nowrap">
                                         {item.quantity.toLocaleString()}
                                     </td>
-                                    <td className="px-6 py-4 text-right text-slate-600">
+                                    <td className="px-6 py-4 text-right text-slate-600 whitespace-nowrap">
                                         {item.palletCount}
                                     </td>
                                 </tr>
