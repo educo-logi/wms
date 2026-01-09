@@ -97,21 +97,66 @@ function App() {
   };
 
   const handleBulkEntry = async (newItems: Omit<InventoryItem, 'id'>[]) => {
-    // TODO: Implement bulk create in Google Script
-    alert('구글 시트 연동: 일괄 추가 기능은 아직 스크립트에 구현되지 않았습니다.');
-    console.log('Would bulk add:', newItems);
+    try {
+      setLoading(true);
+      const itemsToCreate = newItems.map(item => ({
+        ...item,
+        isGgadegi: item.isGgadegi || false
+      }));
+
+      const success = await sheetsApi.createItemsBulk(itemsToCreate);
+
+      if (success) {
+        alert(`${newItems.length}개 항목이 추가되었습니다.`);
+        setIsBulkOpen(false);
+        await fetchItems();
+      } else {
+        alert('일괄 추가에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error bulk creating items:', error);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleStockMove = async (itemId: string, updates: { warehouse: string; rack: string }) => {
-    // TODO: Implement update in Google Script
-    alert('구글 시트 연동: 이동 기능은 아직 스크립트에 구현되지 않았습니다.');
-    console.log('Would move:', itemId, updates);
+    const item = items.find(i => i.id === itemId);
+    if (!item) return;
+
+    const updatedItem = { ...item, ...updates };
+    await handleUpdateItem(updatedItem);
+    setIsMoveOpen(false);
   };
 
   const handleUpdateItem = async (updatedItem: InventoryItem) => {
-    // TODO: Implement update in Google Script
-    alert('구글 시트 연동: 수정 기능은 아직 스크립트에 구현되지 않았습니다.');
-    console.log('Would update:', updatedItem);
+    try {
+      setLoading(true);
+      const success = await sheetsApi.updateItem({
+        id: updatedItem.id,
+        name: updatedItem.name,
+        category: updatedItem.category,
+        warehouse: updatedItem.warehouse,
+        rack: updatedItem.rack,
+        quantity: updatedItem.quantity,
+        palletCount: updatedItem.palletCount,
+        isGgadegi: updatedItem.isGgadegi
+      });
+
+      if (success) {
+        alert('수정되었습니다.');
+        setIsEditOpen(false);
+        await fetchItems();
+      } else {
+        alert('수정에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDeleteItem = async (id: string) => {

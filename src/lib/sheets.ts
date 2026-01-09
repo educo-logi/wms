@@ -91,5 +91,47 @@ export const sheetsApi = {
             console.error('Error creating item:', error);
             return false;
         }
+    },
+
+    // Update item
+    async updateItem(item: GoogleSheetItem): Promise<boolean> {
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify({
+                    action: 'update',
+                    ...item
+                }),
+            });
+            return true;
+        } catch (error) {
+            console.error('Error updating item:', error);
+            return false;
+        }
+    },
+
+    // Bulk create items
+    async createItemsBulk(items: Omit<GoogleSheetItem, 'id'>[]): Promise<boolean> {
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify({
+                    action: 'bulkCreate',
+                    items
+                }),
+            });
+            return true;
+        } catch (error) {
+            console.error('Error creating items in bulk:', error);
+            return false;
+        }
     }
 };
