@@ -10,7 +10,7 @@ export interface GoogleSheetItem {
 }
 
 // TODO: Replace with the actual Web App URL provided by the user
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvmpFUUeE_ZRu0X2-uzWYHMVqmWAEwR0BMQyENljSVeJjyfgQ18UR-3ImdfDUW1ik/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXaMnOM7hGbs7u6wL4YFobX4KplSjLPfnVUxchJV2HSEKgkb7hVI1fX3j1xgaTBY-g/exec';
 
 export const sheetsApi = {
     // Fetch all inventory items
