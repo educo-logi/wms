@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { HeaderMenu } from './components/HeaderMenu';
 import { InventorySearch } from './components/InventorySearch';
 import { InventoryList } from './components/InventoryList';
@@ -9,22 +9,12 @@ import { StockMoveModal } from './components/modals/StockMoveModal';
 import { StockEditModal } from './components/modals/StockEditModal';
 import { BulkEntryModal } from './components/modals/BulkEntryModal';
 import type { InventoryItem } from './types';
-
-// Sample Data
-const initialInventory: InventoryItem[] = [
-  { id: '1', name: '프리스텔라 A3교재', warehouse: '1번 창고', rack: 'A-12', quantity: 2400, palletCount: 4, category: '교재' },
-  { id: '2', name: '프리스텔라 B4교재', warehouse: '1번 창고', rack: 'A-13', quantity: 1800, palletCount: 3, category: '교재' },
-  { id: '3', name: '수학 워크북 초급', warehouse: '2번 창고', rack: 'B-05', quantity: 3200, palletCount: 5, category: '워크북' },
-  { id: '4', name: '영어 교재 중급', warehouse: '2번 창고', rack: 'C-08', quantity: 1600, palletCount: 2, category: '교재' },
-  { id: '5', name: '과학 실험 키트', warehouse: '1번 창고', rack: 'D-20', quantity: 800, palletCount: 2, category: '키트' },
-  { id: '6', name: '미술 도구 세트', warehouse: '3번 창고', rack: 'E-15', quantity: 1200, palletCount: 3, category: '도구' },
-  { id: '7', name: '프리스텔라 C5교재', warehouse: '1번 창고', rack: 'A-14', quantity: 2000, palletCount: 4, category: '교재' },
-  { id: '8', name: '독서 워크북', warehouse: '2번 창고', rack: 'B-10', quantity: 2800, palletCount: 4, category: '워크북' },
-];
+import { sheetsApi, type GoogleSheetItem } from './lib/sheets';
 
 function App() {
-  const [items, setItems] = useState<InventoryItem[]>(initialInventory);
+  const [items, setItems] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   // Modal states
   const [isEntryOpen, setIsEntryOpen] = useState(false);
@@ -36,6 +26,32 @@ function App() {
 
   // View state
   const [currentView, setCurrentView] = useState<'home' | 'status'>('home');
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const fetchItems = async () => {
+    setLoading(true);
+    try {
+      const data = await sheetsApi.getInventory();
+      // Ensure data conforms to InventoryItem
+      const formattedData: InventoryItem[] = data.map((item: GoogleSheetItem) => ({
+        id: item.id.toString(),
+        name: item.name,
+        category: item.category,
+        warehouse: item.warehouse,
+        rack: item.rack,
+        quantity: item.quantity,
+        palletCount: item.palletCount
+      }));
+      setItems(formattedData);
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter logic
   const filteredItems = useMemo(() => {
@@ -50,37 +66,33 @@ function App() {
     );
   }, [searchTerm, items]);
 
-  const handleStockEntry = (newItem: Omit<InventoryItem, 'id'>) => {
-    const id = (Math.max(...items.map(i => parseInt(i.id))) + 1).toString();
-    setItems([...items, { ...newItem, id }]);
+  const handleStockEntry = async (newItem: Omit<InventoryItem, 'id'>) => {
+    // TODO: Implement create in Google Script
+    alert('구글 시트 연동: 추가 기능은 아직 스크립트에 구현되지 않았습니다.');
+    console.log('Would add:', newItem);
   };
 
-  const handleBulkEntry = (newItems: Omit<InventoryItem, 'id'>[]) => {
-    let maxId = Math.max(...items.map(i => parseInt(i.id)));
-    const itemsWithIds = newItems.map(item => {
-      maxId += 1;
-      return { ...item, id: maxId.toString() };
-    });
-    setItems([...items, ...itemsWithIds]);
+  const handleBulkEntry = async (newItems: Omit<InventoryItem, 'id'>[]) => {
+    // TODO: Implement bulk create in Google Script
+    alert('구글 시트 연동: 일괄 추가 기능은 아직 스크립트에 구현되지 않았습니다.');
+    console.log('Would bulk add:', newItems);
   };
 
-  const handleStockMove = (itemId: string, updates: { warehouse: string; rack: string }) => {
-    setItems(items.map(item =>
-      item.id === itemId
-        ? { ...item, ...updates }
-        : item
-    ));
+  const handleStockMove = async (itemId: string, updates: { warehouse: string; rack: string }) => {
+    // TODO: Implement update in Google Script
+    alert('구글 시트 연동: 이동 기능은 아직 스크립트에 구현되지 않았습니다.');
+    console.log('Would move:', itemId, updates);
   };
 
-  const handleUpdateItem = (updatedItem: InventoryItem) => {
-    setItems(items.map(item =>
-      item.id === updatedItem.id ? updatedItem : item
-    ));
+  const handleUpdateItem = async (updatedItem: InventoryItem) => {
+    // TODO: Implement update in Google Script
+    alert('구글 시트 연동: 수정 기능은 아직 스크립트에 구현되지 않았습니다.');
+    console.log('Would update:', updatedItem);
   };
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
     if (window.confirm('정말 이 재고 항목을 삭제하시겠습니까?')) {
-      setItems(items.filter(item => item.id !== id));
+      await handleBulkDelete([id]);
     }
   };
 
@@ -89,9 +101,53 @@ function App() {
     setIsEditOpen(true);
   };
 
-  const handleBulkDelete = (ids: string[]) => {
-    setItems(items.filter(item => !ids.includes(item.id)));
+  const handleToggleGgadegi = async (id: string, currentStatus: boolean | undefined) => {
+    const newStatus = !currentStatus;
+
+    // Optimistic update
+    setItems(prevItems => prevItems.map(item =>
+      item.id === id ? { ...item, isGgadegi: newStatus } : item
+    ));
+
+    // API call in background
+    const success = await sheetsApi.toggleGgadegi(id, newStatus);
+
+    // Revert if failed
+    if (!success) {
+      console.error('Toggle failed, reverting');
+      setItems(prevItems => prevItems.map(item =>
+        item.id === id ? { ...item, isGgadegi: currentStatus } : item
+      ));
+      alert('상태 변경에 실패했습니다.');
+    }
   };
+
+  const handleBulkDelete = async (ids: string[]) => {
+    try {
+      setLoading(true);
+      const success = await sheetsApi.deleteItems(ids);
+      if (success) {
+        // Optimistic update or refetch
+        setItems(prev => prev.filter(item => !ids.includes(item.id)));
+        alert('삭제되었습니다.');
+      } else {
+        throw new Error('Failed to delete');
+      }
+    } catch (error) {
+      console.error('Error deleting items:', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && items.length === 0) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-slate-50">
+        <div className="text-slate-500">데이터를 불러오는 중...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-8 px-4">
@@ -125,7 +181,11 @@ function App() {
               )}
             </>
           ) : (
-            <InventoryStatus items={items} onDelete={handleBulkDelete} />
+            <InventoryStatus
+              items={items}
+              onDelete={handleBulkDelete}
+              onToggleGgadegi={handleToggleGgadegi}
+            />
           )}
         </main>
 

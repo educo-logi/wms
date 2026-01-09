@@ -6,4 +6,5 @@ export interface InventoryItem {
     quantity: number;
     palletCount: number;
     category: string;
+    isGgadegi?: boolean;
 }

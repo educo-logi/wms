@@ -4,12 +4,15 @@ import { Search, Filter, Trash2 } from 'lucide-react';
 
 interface InventoryStatusProps {
     items: InventoryItem[];
+
     onDelete: (ids: string[]) => void;
+    onToggleGgadegi: (id: string, currentStatus: boolean | undefined) => Promise<void>;
 }
 
-export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelete }) => {
+export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelete, onToggleGgadegi }) => {
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>('all');
     const [selectedLine, setSelectedLine] = useState<string>('all');
+    const [isGgadegiOnly, setIsGgadegiOnly] = useState<boolean>(false);
     const [localSearch, setLocalSearch] = useState<string>('');
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -36,15 +39,17 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
             const line = item.rack.split('-')[0] || 'Unknown';
             const matchLine = selectedLine === 'all' || line === selectedLine;
 
+            const matchGgadegi = !isGgadegiOnly || !!item.isGgadegi;
+
             const searchLower = localSearch.toLowerCase();
             const matchSearch = !localSearch ||
                 item.name.toLowerCase().includes(searchLower) ||
                 item.rack.toLowerCase().includes(searchLower) ||
                 item.category.toLowerCase().includes(searchLower);
 
-            return matchWarehouse && matchLine && matchSearch;
+            return matchWarehouse && matchLine && matchSearch && matchGgadegi;
         });
-    }, [items, selectedWarehouse, selectedLine, localSearch]);
+    }, [items, selectedWarehouse, selectedLine, localSearch, isGgadegiOnly]);
 
     // Selection Logic
     const toggleSelectAll = () => {
@@ -74,6 +79,11 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
         }
     };
 
+    const handleToggleGgadegi = async (e: React.MouseEvent, item: InventoryItem) => {
+        e.stopPropagation();
+        await onToggleGgadegi(item.id, item.isGgadegi);
+    };
+
     return (
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -90,6 +100,18 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                             <span className="text-sm font-medium">선택 삭제 ({selectedIds.size})</span>
                         </button>
                     )}
+
+                    {/* Ggadegi Filter */}
+                    <button
+                        onClick={() => setIsGgadegiOnly(!isGgadegiOnly)}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors border ${isGgadegiOnly
+                            ? 'bg-orange-50 text-orange-600 border-orange-200'
+                            : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                            }`}
+                    >
+                        <span className="text-lg">💪</span>
+                        <span className="text-sm font-medium">까데기만 보기</span>
+                    </button>
 
                     {/* Warehouse Filter */}
                     <div className="relative">
@@ -150,6 +172,7 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                 </div>
                             </th>
                             <th className="px-6 py-3 font-medium">제품명</th>
+                            <th className="px-2 py-3 font-medium text-center w-10">💪</th>
                             <th className="px-6 py-3 font-medium">카테고리</th>
                             <th className="px-6 py-3 font-medium">창고</th>
                             <th className="px-6 py-3 font-medium">구역(Rack)</th>
@@ -185,6 +208,16 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
+                                    <td className="px-2 py-4 text-center">
+                                        <button
+                                            onClick={(e) => handleToggleGgadegi(e, item)}
+                                            className={`p-1 rounded-full hover:bg-slate-100 transition-colors ${item.isGgadegi ? 'opacity-100 grayscale-0' : 'opacity-20 grayscale'
+                                                }`}
+                                            title={item.isGgadegi ? '까데기 해제' : '까데기 설정'}
+                                        >
+                                            <span className="text-xl">💪</span>
+                                        </button>
+                                    </td>
                                     <td className="px-6 py-4 text-slate-600">
                                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
                                             {item.category}
