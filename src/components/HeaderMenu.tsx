@@ -30,6 +30,14 @@ export const HeaderMenu: React.FC<HeaderMenuProps> = ({ onStockEntryClick, onSto
                     <Home className="w-6 h-6 text-slate-700" />
                 </button>
 
+                <button
+                    className="p-2 bg-white border border-slate-200 rounded shadow-sm hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                    aria-label="Inventory Status"
+                    onClick={onInventoryStatusClick}
+                >
+                    <ClipboardList className="w-6 h-6 text-slate-700" />
+                </button>
+
                 <DropdownMenu.Root>
                     <DropdownMenu.Trigger asChild>
                         <button
@@ -63,19 +71,10 @@ export const HeaderMenu: React.FC<HeaderMenuProps> = ({ onStockEntryClick, onSto
                                 </div>
                                 재고 이동
                             </DropdownMenu.Item>
-                            <DropdownMenu.Item
-                                className="group text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1 cursor-pointer hover:bg-slate-100 hover:text-blue-600 mt-1"
-                                onSelect={onInventoryStatusClick}
-                            >
-                                <div className="absolute left-0 w-[25px] flex items-center justify-center">
-                                    <ClipboardList className="w-4 h-4" />
-                                </div>
-                                재고 현황
-                            </DropdownMenu.Item>
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                 </DropdownMenu.Root>
             </div>
-        </header>
+        </header >
     );
 };
