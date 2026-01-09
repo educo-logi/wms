@@ -43,7 +43,8 @@ function App() {
         warehouse: item.warehouse,
         rack: item.rack,
         quantity: item.quantity,
-        palletCount: item.palletCount
+        palletCount: item.palletCount,
+        isGgadegi: item.isGgadegi
       }));
       setItems(formattedData);
     } catch (error) {
