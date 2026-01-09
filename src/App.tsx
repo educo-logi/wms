@@ -126,13 +126,27 @@ function App() {
     if (!item) return;
 
     const updatedItem = { ...item, ...updates };
-    await handleUpdateItem(updatedItem);
+    // Optimistic update: Fire and forget (don't await)
+    handleUpdateItem(updatedItem);
     setIsMoveOpen(false);
   };
 
   const handleUpdateItem = async (updatedItem: InventoryItem) => {
+    // 1. Snapshot previous state for rollback
+    const oldItem = items.find(i => i.id === updatedItem.id);
+    if (!oldItem) return;
+
+    // 2. Optimistic Update: Update UI immediately
+    setItems(prevItems => prevItems.map(item =>
+      item.id === updatedItem.id ? updatedItem : item
+    ));
+
+    // 3. Close Modal Immediately
+    setIsEditOpen(false);
+
     try {
-      setLoading(true);
+      // 4. Background API Call
+      // Convert to GoogleSheetItem format if needed (remove extra props if any)
       const success = await sheetsApi.updateItem({
         id: updatedItem.id,
         name: updatedItem.name,
@@ -144,18 +158,20 @@ function App() {
         isGgadegi: updatedItem.isGgadegi
       });
 
-      if (success) {
-        alert('수정되었습니다.');
-        setIsEditOpen(false);
-        await fetchItems();
-      } else {
-        alert('수정에 실패했습니다.');
+      if (!success) {
+        throw new Error('Update failed');
       }
+
+      // Optional: Silent verify/refresh in background
+      // fetchItems(); 
     } catch (error) {
       console.error('Error updating item:', error);
-      alert('오류가 발생했습니다.');
-    } finally {
-      setLoading(false);
+      alert('수정에 실패했습니다. 변경사항이 취소됩니다.');
+
+      // 5. Revert on Failure
+      setItems(prevItems => prevItems.map(item =>
+        item.id === updatedItem.id ? oldItem : item
+      ));
     }
   };
 
