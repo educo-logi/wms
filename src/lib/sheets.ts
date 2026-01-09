@@ -15,11 +15,13 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvmpFUUeE_ZR
 export const sheetsApi = {
     // Fetch all inventory items
     async getInventory(): Promise<GoogleSheetItem[]> {
-
         try {
-            const response = await fetch(GOOGLE_SCRIPT_URL);
+            // Add cache buster to prevent browser caching
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?t=${new Date().getTime()}`);
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
+            console.log('Raw data from Sheet:', data); // Debug log
+
             // Convert numbers if necessary (sheets might return strings)
             return data.map((item: any) => ({
                 ...item,
