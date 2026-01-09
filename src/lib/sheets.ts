@@ -70,5 +70,26 @@ export const sheetsApi = {
             console.error('Error toggling Ggadegi:', error);
             return false;
         }
+    },
+
+    // Create new item
+    async createItem(item: Omit<GoogleSheetItem, 'id'>): Promise<boolean> {
+        try {
+            await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify({
+                    action: 'create',
+                    ...item
+                }),
+            });
+            return true;
+        } catch (error) {
+            console.error('Error creating item:', error);
+            return false;
+        }
     }
 };

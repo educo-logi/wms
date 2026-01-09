@@ -68,9 +68,32 @@ function App() {
   }, [searchTerm, items]);
 
   const handleStockEntry = async (newItem: Omit<InventoryItem, 'id'>) => {
-    // TODO: Implement create in Google Script
-    alert('구글 시트 연동: 추가 기능은 아직 스크립트에 구현되지 않았습니다.');
-    console.log('Would add:', newItem);
+    try {
+      setLoading(true);
+      const success = await sheetsApi.createItem({
+        name: newItem.name,
+        category: newItem.category,
+        warehouse: newItem.warehouse,
+        rack: newItem.rack,
+        quantity: newItem.quantity,
+        palletCount: newItem.palletCount,
+        isGgadegi: newItem.isGgadegi || false
+      });
+
+      if (success) {
+        alert('성공적으로 추가되었습니다.');
+        setIsEntryOpen(false);
+        // Refresh items to get the new ID and data
+        await fetchItems();
+      } else {
+        alert('추가에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Error creating item:', error);
+      alert('오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBulkEntry = async (newItems: Omit<InventoryItem, 'id'>[]) => {
