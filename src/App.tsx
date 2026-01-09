@@ -253,6 +253,7 @@ function App() {
             <InventoryStatus
               items={items}
               onDelete={handleBulkDelete}
+              onEdit={openEditModal}
               onToggleGgadegi={handleToggleGgadegi}
             />
           )}

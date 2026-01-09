@@ -1,15 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import type { InventoryItem } from '../types';
-import { Search, Filter, Trash2 } from 'lucide-react';
+import { Search, Filter, Trash2, Pencil } from 'lucide-react';
 
 interface InventoryStatusProps {
     items: InventoryItem[];
 
     onDelete: (ids: string[]) => void;
+    onEdit: (item: InventoryItem) => void;
     onToggleGgadegi: (id: string, currentStatus: boolean | undefined) => Promise<void>;
 }
 
-export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelete, onToggleGgadegi }) => {
+export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelete, onEdit, onToggleGgadegi }) => {
     const [selectedWarehouse, setSelectedWarehouse] = useState<string>('all');
     const [selectedLine, setSelectedLine] = useState<string>('all');
     const [isGgadegiOnly, setIsGgadegiOnly] = useState<boolean>(false);
@@ -211,7 +212,21 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                                             />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">{item.name}</td>
+                                    <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
+                                        <div className="flex items-center gap-2">
+                                            {item.name}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    onEdit(item);
+                                                }}
+                                                className="p-1 text-slate-400 hover:text-blue-600 hover:bg-slate-100 rounded transition-colors"
+                                                title="수정"
+                                            >
+                                                <Pencil className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                    </td>
                                     <td className="px-2 py-4 text-center whitespace-nowrap">
                                         <button
                                             onClick={(e) => handleToggleGgadegi(e, item)}
