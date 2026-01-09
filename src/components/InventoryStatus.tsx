@@ -84,6 +84,15 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
         await onToggleGgadegi(item.id, item.isGgadegi);
     };
 
+    const handleDebug = () => {
+        if (items.length > 0) {
+            const firstItem = items[0];
+            alert(`[Debug Info]\nID: ${firstItem.id}\nName: ${firstItem.name}\nisGgadegi (Raw): ${firstItem.isGgadegi}\nType: ${typeof firstItem.isGgadegi}`);
+        } else {
+            alert('데이터가 없습니다.');
+        }
+    };
+
     return (
         <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
@@ -111,6 +120,14 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
                     >
                         <span className="text-lg">💪</span>
                         <span className="text-sm font-medium">까데기만 보기</span>
+                    </button>
+
+                    {/* Debug Button (Temp) */}
+                    <button
+                        onClick={handleDebug}
+                        className="px-3 py-2 bg-gray-100 text-gray-600 rounded-md text-xs hover:bg-gray-200"
+                    >
+                        데이터 확인(디버그)
                     </button>
 
                     {/* Warehouse Filter */}
