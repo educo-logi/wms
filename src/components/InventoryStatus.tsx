@@ -87,7 +87,8 @@ export const InventoryStatus: React.FC<InventoryStatusProps> = ({ items, onDelet
     const handleDebug = () => {
         if (items.length > 0) {
             const firstItem = items[0];
-            alert(`[Debug Info]\nID: ${firstItem.id}\nName: ${firstItem.name}\nisGgadegi (Raw): ${firstItem.isGgadegi}\nType: ${typeof firstItem.isGgadegi}`);
+            const keys = Object.keys(firstItem).join(', ');
+            alert(`[Debug Info]\nID: ${firstItem.id}\nName: ${firstItem.name}\nisGgadegi (Value): ${firstItem.isGgadegi}\n\n[All Keys Found]\n${keys}`);
         } else {
             alert('데이터가 없습니다.');
         }
