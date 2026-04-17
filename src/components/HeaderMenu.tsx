@@ -1,4 +1,4 @@
-import { Menu, PackagePlus, ArrowRightLeft, Home, ClipboardList } from 'lucide-react';
+import { Menu, PackagePlus, ArrowRightLeft, Home, ClipboardList, FileSpreadsheet } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 interface HeaderMenuProps {
@@ -74,6 +74,14 @@ export const HeaderMenu: React.FC<HeaderMenuProps> = ({ onStockEntryClick, onSto
                         </DropdownMenu.Content>
                     </DropdownMenu.Portal>
                 </DropdownMenu.Root>
+
+                <button
+                    className="p-2 bg-white border border-slate-200 rounded shadow-sm hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none transition-colors"
+                    aria-label="Google Sheets"
+                    onClick={() => window.open('https://docs.google.com/spreadsheets/d/1KMturJWA8rUkdM6ItEsEiHzEni-MBlvoztBs_6LgtP0/edit?gid=0#gid=0', '_blank')}
+                >
+                    <FileSpreadsheet className="w-6 h-6 text-slate-700" />
+                </button>
             </div>
         </header >
     );
